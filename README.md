@@ -1,7 +1,18 @@
-# Docker Compose NAS
+# HomeMediaServer
 
-After searching for the perfect NAS solution, I realized what I wanted could be achieved 
-with some Docker containers on a vanilla Linux box. The result is an opinionated Docker Compose configuration capable of 
+Forked from https://github.com/AdrienPoupa/docker-compose-nas
+
+Stripped out and modified for personal use.
+
+## Installation
+
+
+
+
+#### COPY
+
+After searching for the perfect NAS solution, I realized what I wanted could be achieved
+with some Docker containers on a vanilla Linux box. The result is an opinionated Docker Compose configuration capable of
 browsing indexers to retrieve media resources and downloading them through a WireGuard VPN with port forwarding.
 SSL certificates and remote access through Tailscale are supported.
 
@@ -84,7 +95,7 @@ I am running it in Ubuntu Server 22.04; I also tested this setup on a [Synology 
 | [Calibre-Web](https://github.com/janeczku/calibre-web)             | Optional - Web app for browsing, reading and downloading eBooks stored in a Calibre database<br/>Enable with `COMPOSE_PROFILES=calibre-web`          | [linuxserver/calibre-web](https://hub.docker.com/r/linuxserver/calibre-web)              | /calibre     |
 | [Decluttarr](https://github.com/ManiMatter/decluttarr)             | Optional - Keeps the download queues free of stalled and redundant downloads. <br/>Enable with `COMPOSE_PROFILES=decluttarr`                         | [manimatter/decluttarr:latest](https://ghcr.io/manimatter/decluttarr:latest)             |              |
 
-Optional containers are not enabled by default, they need to be enabled, 
+Optional containers are not enabled by default, they need to be enabled,
 see [Optional Services](#optional-services) for more information.
 
 ## Quick Start
@@ -156,7 +167,7 @@ For PIA + WireGuard, fill `.env` and fill it with your PIA credentials.
 
 The location of the server it will connect to is set by `LOC=ca`, defaulting to Montreal - Canada.
 
-You need to fill the credentials in the `PIA_*` environment variable, 
+You need to fill the credentials in the `PIA_*` environment variable,
 otherwise the VPN container will exit and qBittorrent will not start.
 
 ## Sonarr, Radarr & Lidarr
@@ -210,7 +221,7 @@ The WebUI administrator username is: admin
 The WebUI administrator password was not set. A temporary password is provided for this session: <some_password>
 ```
 
-Use this password to access the UI, then go to Settings > Web UI and set your own password, 
+Use this password to access the UI, then go to Settings > Web UI and set your own password,
 then set it in `.env`'s `QBITTORRENT_PASSWORD` variable.
 
 The login page can be disabled on for the local network in by enabling `Bypass authentication for clients`.
@@ -230,7 +241,7 @@ To use the VueTorrent WebUI just go to `qBittorrent`, `Options`, `Web UI`, `Use 
 To enable [hardware transcoding](https://jellyfin.org/docs/general/administration/hardware-acceleration/),
 depending on your system, you may need to add the following block:
 
-```    
+```
 devices:
   - /dev/dri/renderD128:/dev/dri/renderD128
   - /dev/dri/card0:/dev/dri/card0
@@ -243,7 +254,7 @@ hardware.
 
 The homepage comes with sensible defaults; some settings can ben controlled via environment variables in `.env`.
 
-If you to customize further, you can modify the files in `/homepage/*.yaml` according to the [documentation](https://gethomepage.dev). 
+If you to customize further, you can modify the files in `/homepage/*.yaml` according to the [documentation](https://gethomepage.dev).
 Due to how the Docker socket is configured for the Docker integration, files must be edited as root.
 
 The files in `/homepage/tpl/*.yaml` only serve as a base to set up the homepage configuration on first run.
@@ -295,8 +306,8 @@ LETS_ENCRYPT_CA_SERVER=https://acme-staging-v02.api.letsencrypt.org/directory
 If it worked, you will see the staging certificate at https://nas.domain.com.
 You may remove the `./letsencrypt/acme.json` file and restart the services to issue the real certificate.
 
-You are free to use any DNS01 provider. Simply replace `DNS_CHALLENGE_PROVIDER` with your own provider, 
-[see complete list here](https://doc.traefik.io/traefik/https/acme/#providers). 
+You are free to use any DNS01 provider. Simply replace `DNS_CHALLENGE_PROVIDER` with your own provider,
+[see complete list here](https://doc.traefik.io/traefik/https/acme/#providers).
 You will also need to inject the environments variables specific to your provider.
 
 Certificate generation can be disabled by setting `DNS_CHALLENGE` to `false`.
@@ -323,7 +334,7 @@ and from the outside you need to connect to Tailscale first, then the NAS domain
 
 ## Optional Services
 
-Optional services are not launched by default and enabled by appending their profile name to the 
+Optional services are not launched by default and enabled by appending their profile name to the
 `COMPOSE_PROFILES` environment variable (see [Docker documentation](https://docs.docker.com/compose/profiles)).
 
 Say you want to enable FlareSolverr, you should have `COMPOSE_PROFILES=flaresolverr`.
@@ -362,7 +373,7 @@ from the ACME certificates Traefik generates in JSON.
 #### DHCP
 
 If you want to use the AdGuard Home DHCP server, for example because your router does not allow changing its DNS server,
-you will need to select the `eth0` DHCP interface matching `10.0.0.10`, then specify the 
+you will need to select the `eth0` DHCP interface matching `10.0.0.10`, then specify the
 Gateway IP to match your router address (`192.168.0.1` for example) and set a range of IP addresses assigned to local
 devices.
 
@@ -476,23 +487,23 @@ synosystemctl restart nginx
 
 Since WireGuard is not part of DSM's kernel, an external package must be installed for the `vpn` container to run.
 
-For DSM 7.1, download and install the package corresponding to your NAS CPU architecture 
+For DSM 7.1, download and install the package corresponding to your NAS CPU architecture
 [from here](https://github.com/vegardit/synology-wireguard/releases).
 
-As specified in the [project's README](https://github.com/vegardit/synology-wireguard#installation), 
+As specified in the [project's README](https://github.com/vegardit/synology-wireguard#installation),
 the package must be run as `root` from the command line: `sudo /var/packages/WireGuard/scripts/start`
 
 ### Free Port 1900
 
-Jellyfin will fail to run by default since the port 1900 
-[is not free](https://lookanotherblog.com/resolve-port-1900-conflict-between-plex-and-synology/). 
+Jellyfin will fail to run by default since the port 1900
+[is not free](https://lookanotherblog.com/resolve-port-1900-conflict-between-plex-and-synology/).
 You may free it by going to  Control Panel > File Services > Advanced > SSTP > Untick `Enable Windows network discovery`.
 
 ### User Permissions
 
 By default, the user and groups are set to `1000` as it is the default on Ubuntu and many other Linux distributions.
-However, that is not the case in Synology; the first user should have an ID of `1026` and a group of `100`. 
-You may check yours with `id`. 
+However, that is not the case in Synology; the first user should have an ID of `1026` and a group of `100`.
+You may check yours with `id`.
 Update the `USER_ID` and `GROUP_ID` in `.env` with your IDs.
 Not updating them may result in [permission issues](https://github.com/AdrienPoupa/docker-compose-nas/issues/10).
 
@@ -504,7 +515,7 @@ GROUP_ID=100
 ### Synology DHCP Server and Adguard Home Port Conflict
 
 If you are using the Synology DHCP Server package, it will use port 53 even if it does not need it. This is because
-it uses Dnsmasq to handle DHCP requests, but does not serve DNS queries. The port can be released by editing (as root) 
+it uses Dnsmasq to handle DHCP requests, but does not serve DNS queries. The port can be released by editing (as root)
 `/usr/local/lib/systemd/system/pkg-dhcpserver.service` and [adding -p 0](https://www.reddit.com/r/synology/comments/njwdao/comment/j2d23qr/?utm_source=reddit&utm_medium=web2x&context=3):
 `ExecStart=/var/packages/DhcpServer/target/dnsmasq-2.x/usr/bin/dnsmasq --user=DhcpServer --group=DhcpServer --cache-size=200 --conf-file=/etc/dhcpd/dhcpd.conf --dhcp-lease-max=2147483648 -p 0`
 Reboot the NAS and the port 53 will be free for Adguard.

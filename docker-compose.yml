@@ -1,44 +1,44 @@
 services:
-  traefik:
-    image: ghcr.io/traefik/traefik:3.3
-    container_name: traefik
-    restart: always
-    environment:
-      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
-      - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
-      - CLOUDFLARE_ZONE_API_TOKEN=${CLOUDFLARE_ZONE_API_TOKEN}
-      - LETS_ENCRYPT_EMAIL=${LETS_ENCRYPT_EMAIL}
-    command:
-      - --ping=true
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.web-secure.address=:443
-      - --entrypoints.web.http.redirections.entryPoint.to=web-secure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      - --entrypoints.web.http.redirections.entrypoint.permanent=true
-      - --experimental.plugins.rewrite-body.modulename=github.com/packruler/rewrite-body
-      - --experimental.plugins.rewrite-body.version=v1.2.0
-      - --experimental.plugins.rewriteHeaders.modulename=github.com/XciD/traefik-plugin-rewrite-headers
-      - --experimental.plugins.rewriteHeaders.version=v0.0.3
-      - --certificatesresolvers.myresolver.acme.dnschallenge=${DNS_CHALLENGE:-true}
-      - --certificatesresolvers.myresolver.acme.dnschallenge.provider=${DNS_CHALLENGE_PROVIDER:-cloudflare}
-      - --certificatesresolvers.myresolver.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesresolvers.myresolver.acme.caserver=${LETS_ENCRYPT_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
-      - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
-      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ${CONFIG_ROOT:-.}/letsencrypt:/letsencrypt
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    extra_hosts:
-      - host.docker.internal:172.17.0.1
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 30s
-      retries: 10
+  # traefik:
+  #   image: traefik:v3.1
+  #   container_name: traefik
+  #   restart: always
+  #   environment:
+  #     - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+  #     - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
+  #     - CLOUDFLARE_ZONE_API_TOKEN=${CLOUDFLARE_ZONE_API_TOKEN}
+  #     - LETS_ENCRYPT_EMAIL=${LETS_ENCRYPT_EMAIL}
+  #   command:
+  #     - --ping=true
+  #     - --providers.docker=true
+  #     - --providers.docker.exposedbydefault=false
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.web-secure.address=:443
+  #     - --entrypoints.web.http.redirections.entryPoint.to=web-secure
+  #     - --entrypoints.web.http.redirections.entryPoint.scheme=https
+  #     - --entrypoints.web.http.redirections.entrypoint.permanent=true
+  #     - --experimental.plugins.rewrite-body.modulename=github.com/packruler/rewrite-body
+  #     - --experimental.plugins.rewrite-body.version=v1.2.0
+  #     - --experimental.plugins.rewriteHeaders.modulename=github.com/XciD/traefik-plugin-rewrite-headers
+  #     - --experimental.plugins.rewriteHeaders.version=v0.0.3
+  #     - --certificatesresolvers.myresolver.acme.dnschallenge=${DNS_CHALLENGE:-true}
+  #     - --certificatesresolvers.myresolver.acme.dnschallenge.provider=${DNS_CHALLENGE_PROVIDER:-cloudflare}
+  #     - --certificatesresolvers.myresolver.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+  #     - --certificatesresolvers.myresolver.acme.caserver=${LETS_ENCRYPT_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
+  #     - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
+  #     - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ${CONFIG_ROOT:-.}/letsencrypt:/letsencrypt
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #   extra_hosts:
+  #     - host.docker.internal:172.17.0.1
+  #   healthcheck:
+  #     test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+  #     interval: 30s
+  #     retries: 10
   sonarr:
     image: lscr.io/linuxserver/sonarr
     container_name: sonarr
@@ -55,11 +55,11 @@ services:
       interval: 30s
       retries: 10
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.sonarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/sonarr`))
-      - traefik.http.routers.sonarr.tls=true
-      - traefik.http.routers.sonarr.tls.certresolver=myresolver
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+      # - traefik.enable=true
+      # - traefik.http.routers.sonarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/sonarr`))
+      # - traefik.http.routers.sonarr.tls=true
+      # - traefik.http.routers.sonarr.tls.certresolver=myresolver
+      # - traefik.http.services.sonarr.loadbalancer.server.port=8989
       - homepage.group=Media
       - homepage.name=Sonarr
       - homepage.icon=sonarr.png
@@ -85,11 +85,11 @@ services:
       interval: 30s
       retries: 10
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.radarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/radarr`))
-      - traefik.http.routers.radarr.tls=true
-      - traefik.http.routers.radarr.tls.certresolver=myresolver
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
+      # - traefik.enable=true
+      # - traefik.http.routers.radarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/radarr`))
+      # - traefik.http.routers.radarr.tls=true
+      # - traefik.http.routers.radarr.tls.certresolver=myresolver
+      # - traefik.http.services.radarr.loadbalancer.server.port=7878
       - homepage.group=Media
       - homepage.name=Radarr
       - homepage.icon=radarr.png
@@ -99,38 +99,6 @@ services:
       - homepage.widget.type=radarr
       - homepage.widget.url=http://radarr:7878/radarr
       - homepage.widget.key=${RADARR_API_KEY}
-  lidarr:
-    image: lscr.io/linuxserver/lidarr
-    container_name: lidarr
-    environment:
-      - PUID=${USER_ID}
-      - PGID=${GROUP_ID}
-      - TZ=${TIMEZONE}
-    volumes:
-      - ${CONFIG_ROOT:-.}/lidarr:/config
-      - ${DATA_ROOT}:/data
-    restart: always
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "http://127.0.0.1:8686/lidarr/ping"]
-      interval: 30s
-      retries: 10
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.lidarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/lidarr`))
-      - traefik.http.routers.lidarr.tls=true
-      - traefik.http.routers.lidarr.tls.certresolver=myresolver
-      - traefik.http.services.lidarr.loadbalancer.server.port=8686
-      - homepage.group=Media
-      - homepage.name=Lidarr
-      - homepage.icon=lidarr.png
-      - homepage.href=/lidarr
-      - homepage.description=Music management
-      - homepage.weight=2
-      - homepage.widget.type=lidarr
-      - homepage.widget.url=http://lidarr:8686/lidarr
-      - homepage.widget.key=${LIDARR_API_KEY}
-    profiles:
-      - lidarr
   bazarr:
     image: lscr.io/linuxserver/bazarr
     container_name: bazarr
@@ -147,11 +115,11 @@ services:
       interval: 5s
       retries: 10
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.bazarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/bazarr`))
-      - traefik.http.routers.bazarr.tls=true
-      - traefik.http.routers.bazarr.tls.certresolver=myresolver
-      - traefik.http.services.bazarr.loadbalancer.server.port=6767
+      # - traefik.enable=true
+      # - traefik.http.routers.bazarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/bazarr`))
+      # - traefik.http.routers.bazarr.tls=true
+      # - traefik.http.routers.bazarr.tls.certresolver=myresolver
+      # - traefik.http.services.bazarr.loadbalancer.server.port=6767
       - homepage.group=Download
       - homepage.name=Bazarr
       - homepage.icon=bazarr.png
@@ -182,57 +150,52 @@ services:
       interval: 30s
       retries: 10
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.jellyseerr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/jellyseerr`))
-      - traefik.http.routers.jellyseerr.tls=true
-      - traefik.http.routers.jellyseerr.tls.certresolver=myresolver
-      - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
-      - traefik.http.routers.jellyseerr.middlewares=jellyseerr-stripprefix,jellyseerr-rewrite,jellyseerr-rewriteHeaders
-      - traefik.http.middlewares.jellyseerr-stripprefix.stripPrefix.prefixes=/jellyseerr
-      - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[0].header=location
-      - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[0].regex=^/(.+)$
-      - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[0].replacement=/jellyseerr/$1
-      - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[1].header=location
-      - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[1].regex=^/$
-      - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[1].replacement=/jellyseerr
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[0]=text/html
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[1]=application/javascript
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[2]=*/*
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[3]=application/json
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[1].regex=/_next
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[1].replacement=/jellyseerr/_next
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[2].regex=\/_next\\/data\\//
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[2].replacement=\/jellyseerr\/_next\/data\//
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[3].regex=/api/v1
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[3].replacement=/jellyseerr/api/v1
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[4].regex=/login/plex/loading
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[4].replacement=/jellyseerr/login/plex/loading
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[5].regex=/images/
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[5].replacement=/jellyseerr/images/
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[6].regex=/favicon
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[6].replacement=/jellyseerr/favicon
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[7].regex=/logo_
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[7].replacement=/jellyseerr/logo_
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[8].regex=/site.webmanifest
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[8].replacement=/jellyseerr/site.webmanifest
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[9].regex=/sw.js
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[9].replacement=/jellyseerr/sw.js
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[10].regex=/offline.html
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[10].replacement=/jellyseerr/offline.html
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[11].regex=src="/os_logo_square.png"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[11].replacement=src="/jellyseerr/os_logo_square.png"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[12].regex=href([=:])"/([/a-zA-Z?=]*)"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[12].replacement=href$1"/jellyseerr/$2"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[13].regex=linkUrl:"/([/a-zA-Z?=]*)"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[13].replacement=linkUrl:"/jellyseerr/$1"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[14].regex="/([a-z]+)/".concat
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[14].replacement="/jellyseerr/$1/".concat
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[15].regex=url:"/([/a-zA-Z?=]*)"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[15].replacement=url:"/jellyseerr/$1"
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[16].regex=/imageproxy/
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[16].replacement=/jellyseerr/imageproxy/
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[17].regex=/avatarproxy/
-      - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[17].replacement=/jellyseerr/avatarproxy/
+      # - traefik.enable=true
+      # - traefik.http.routers.jellyseerr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/jellyseerr`))
+      # - traefik.http.routers.jellyseerr.tls=true
+      # - traefik.http.routers.jellyseerr.tls.certresolver=myresolver
+      # - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
+      # - traefik.http.routers.jellyseerr.middlewares=jellyseerr-stripprefix,jellyseerr-rewrite,jellyseerr-rewriteHeaders
+      # - traefik.http.middlewares.jellyseerr-stripprefix.stripPrefix.prefixes=/jellyseerr
+      # - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[0].header=location
+      # - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[0].regex=^/(.+)$
+      # - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[0].replacement=/jellyseerr/$1
+      # - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[1].header=location
+      # - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[1].regex=^/$
+      # - traefik.http.middlewares.jellyseerr-rewriteHeaders.plugin.rewriteHeaders.rewrites[1].replacement=/jellyseerr
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[0]=text/html
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[1]=application/javascript
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.monitoring.types[2]=*/*
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[1].regex=/_next
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[1].replacement=/jellyseerr/_next
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[2].regex=\/_next\\/data\\//
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[2].replacement=\/jellyseerr\/_next\/data\//
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[3].regex=/api/v1
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[3].replacement=/jellyseerr/api/v1
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[4].regex=/login/plex/loading
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[4].replacement=/jellyseerr/login/plex/loading
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[5].regex=/images/
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[5].replacement=/jellyseerr/images/
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[6].regex=/favicon
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[6].replacement=/jellyseerr/favicon
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[7].regex=/logo_
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[7].replacement=/jellyseerr/logo_
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[8].regex=/site.webmanifest
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[8].replacement=/jellyseerr/site.webmanifest
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[9].regex=/sw.js
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[9].replacement=/jellyseerr/sw.js
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[10].regex=/offline.html
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[10].replacement=/jellyseerr/offline.html
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[11].regex=src="/os_logo_square.png"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[11].replacement=src="/jellyseerr/os_logo_square.png"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[12].regex=href([=:])"/([/a-zA-Z?=]*)"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[12].replacement=href$1"/jellyseerr/$2"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[13].regex=linkUrl:"/([/a-zA-Z?=]*)"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[13].replacement=linkUrl:"/jellyseerr/$1"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[14].regex="/([a-z]+)/".concat
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[14].replacement="/jellyseerr/$1/".concat
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[15].regex=url:"/([/a-zA-Z?=]*)"
+      # - traefik.http.middlewares.jellyseerr-rewrite.plugin.rewrite-body.rewrites[15].replacement=url:"/jellyseerr/$1"
       - homepage.group=Media
       - homepage.name=JellySeerr
       - homepage.icon=jellyseerr.png
@@ -257,11 +220,11 @@ services:
       interval: 30s
       retries: 10
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.prowlarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/prowlarr`))
-      - traefik.http.routers.prowlarr.tls=true
-      - traefik.http.routers.prowlarr.tls.certresolver=myresolver
-      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+      # - traefik.enable=true
+      # - traefik.http.routers.prowlarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/prowlarr`))
+      # - traefik.http.routers.prowlarr.tls=true
+      # - traefik.http.routers.prowlarr.tls.certresolver=myresolver
+      # - traefik.http.services.prowlarr.loadbalancer.server.port=9696
       - homepage.group=Download
       - homepage.name=Prowlarr
       - homepage.icon=prowlarr.png
@@ -271,22 +234,6 @@ services:
       - homepage.widget.type=prowlarr
       - homepage.widget.url=http://prowlarr:9696/prowlarr
       - homepage.widget.key=${PROWLARR_API_KEY}
-  flaresolverr:
-    image: 21hsmw/flaresolverr:nodriver
-    container_name: flaresolverr
-    restart: always
-    environment:
-      - LOG_LEVEL=${LOG_LEVEL:-info}
-      - LOG_HTML=${LOG_HTML:-false}
-      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-      - TZ=${TIMEZONE}
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.flaresolverr.rule=PathPrefix(`/flaresolverr`)
-      - traefik.http.routers.flaresolverr.tls=true
-      - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
-    profiles:
-      - flaresolverr
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:libtorrentv1
     container_name: qbittorrent
@@ -307,23 +254,23 @@ services:
         ["CMD", "curl", "--fail", "http://127.0.0.1:8080", "https://google.com"]
       interval: 30s
       retries: 10
-    network_mode: "service:vpn"
-    depends_on:
-      vpn:
-        condition: service_healthy
+    # network_mode: "service:vpn"
+    # depends_on:
+    #   vpn:
+    #     condition: service_healthy
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.qbittorrent.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/qbittorrent`))
-      - traefik.http.routers.qbittorrent.tls=true
-      - traefik.http.routers.qbittorrent.tls.certresolver=myresolver
-      - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
-      - traefik.http.routers.qbittorrent.middlewares=qbittorrent-strip-slash,qbittorrent-stripprefix
+      # - traefik.enable=true
+      # - traefik.http.routers.qbittorrent.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/qbittorrent`))
+      # - traefik.http.routers.qbittorrent.tls=true
+      # - traefik.http.routers.qbittorrent.tls.certresolver=myresolver
+      # - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
+      # - traefik.http.routers.qbittorrent.middlewares=qbittorrent-strip-slash,qbittorrent-stripprefix
       # https://github.com/qbittorrent/qBittorrent/issues/5693#issuecomment-552146296
-      - traefik.http.middlewares.qbittorrent-stripprefix.stripPrefix.prefixes=/qbittorrent
+      # - traefik.http.middlewares.qbittorrent-stripprefix.stripPrefix.prefixes=/qbittorrent
       # https://community.traefik.io/t/middleware-to-add-the-if-needed/1895/19
-      - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.regex=(^.*\/qbittorrent$$)
-      - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.replacement=$$1/
-      - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.permanent=false
+      # - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.regex=(^.*\/qbittorrent$$)
+      # - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.replacement=$$1/
+      # - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.permanent=false
       #- com.centurylinklabs.watchtower.depends-on=/vpn
       - homepage.group=Download
       - homepage.name=qBittorrent
@@ -335,37 +282,6 @@ services:
       - homepage.widget.url=http://vpn:8080
       - homepage.widget.username=${QBITTORRENT_USERNAME}
       - homepage.widget.password=${QBITTORRENT_PASSWORD}
-  vpn:
-    image: ghcr.io/thrnz/docker-wireguard-pia:latest
-    container_name: vpn
-    volumes:
-      - ${CONFIG_ROOT:-.}/pia:/pia
-      - ${CONFIG_ROOT:-.}/pia-shared:/pia-shared
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    environment:
-      - LOC=${PIA_LOCATION}
-      - USER=${PIA_USER}
-      - PASS=${PIA_PASS}
-      - QBT_USER=${QBITTORRENT_USERNAME}
-      - QBT_PASS=${QBITTORRENT_PASSWORD}
-      - LOCAL_NETWORK=${PIA_LOCAL_NETWORK}
-      - PORT_FORWARDING=1
-      - PORT_PERSIST=1
-      - PORT_SCRIPT=/pia-shared/portupdate-qbittorrent.sh
-      - FIREWALL=0
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-      - net.ipv6.conf.default.disable_ipv6=1
-      - net.ipv6.conf.all.disable_ipv6=1
-      - net.ipv6.conf.lo.disable_ipv6=1
-    healthcheck:
-      test: ping -c 1 www.google.com || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: always
   unpackerr:
     image: ghcr.io/unpackerr/unpackerr:latest
     container_name: unpackerr
@@ -381,34 +297,6 @@ services:
       - UN_RADARR_0_API_KEY=${RADARR_API_KEY}
     security_opt:
       - no-new-privileges:true
-  sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:latest
-    container_name: sabnzbd
-    environment:
-      - PUID=${USER_ID}
-      - PGID=${GROUP_ID}
-      - TZ=${TIMEZONE}
-    volumes:
-      - ${CONFIG_ROOT:-.}/sabnzbd:/config
-      - ${DATA_ROOT}:/data
-    restart: always
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.sabnzbd.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/sabnzbd`) || PathPrefix(`/sabnzbd`))
-      - traefik.http.routers.sabnzbd.tls=true
-      - traefik.http.routers.sabnzbd.tls.certresolver=myresolver
-      - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
-      - homepage.group=Download
-      - homepage.name=Sabnzbd
-      - homepage.icon=sabnzbd.png
-      - homepage.href=/sabnzbd
-      - homepage.description=Usenet
-      - homepage.weight=3
-      - homepage.widget.type=sabnzbd
-      - homepage.widget.url=http://sabnzbd:8080/sabnzbd
-      - homepage.widget.key=${SABNZBD_API_KEY}
-    profiles:
-      - sabnzbd
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
@@ -429,11 +317,11 @@ services:
       interval: 30s
       retries: 10
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.jellyfin.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/jellyfin`))
-      - traefik.http.routers.jellyfin.tls=true
-      - traefik.http.routers.jellyfin.tls.certresolver=myresolver
-      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+      # - traefik.enable=true
+      # - traefik.http.routers.jellyfin.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/jellyfin`))
+      # - traefik.http.routers.jellyfin.tls=true
+      # - traefik.http.routers.jellyfin.tls.certresolver=myresolver
+      # - traefik.http.services.jellyfin.loadbalancer.server.port=8096
       - homepage.group=Media
       - homepage.name=Jellyfin
       - homepage.icon=jellyfin.png
@@ -521,25 +409,18 @@ services:
       - HOMEPAGE_VAR_TITLE=${HOMEPAGE_VAR_TITLE}
       - HOMEPAGE_VAR_SEARCH_PROVIDER=${HOMEPAGE_VAR_SEARCH_PROVIDER}
       - HOMEPAGE_VAR_HEADER_STYLE=${HOMEPAGE_VAR_HEADER_STYLE}
-      - HOMEPAGE_VAR_WEATHER_CITY=${HOMEPAGE_VAR_WEATHER_CITY}
-      - HOMEPAGE_VAR_WEATHER_LAT=${HOMEPAGE_VAR_WEATHER_LAT}
-      - HOMEPAGE_VAR_WEATHER_LONG=${HOMEPAGE_VAR_WEATHER_LONG}
-      - HOMEPAGE_VAR_WEATHER_TIME=${TIMEZONE}
-      - HOMEPAGE_VAR_WEATHER_UNIT=${HOMEPAGE_VAR_WEATHER_UNIT}
-      - HOMEPAGE_ALLOWED_HOSTS=${HOSTNAME}
     volumes:
       - ${CONFIG_ROOT:-.}/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DATA_ROOT}:/data
     restart: always
-    command:
-      [sh, -c, "cp -n /app/config/tpl/*.yaml /app/config && node server.js"]
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.homepage.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/`))
-      - traefik.http.routers.homepage.tls=true
-      - traefik.http.routers.homepage.tls.certresolver=myresolver
-      - traefik.http.services.homepage.loadbalancer.server.port=3000
+    command: [sh, -c, "cp -n /app/config/tpl/*.yaml /app/config && node server.js"]
+    # labels:
+      # - traefik.enable=true
+      # - traefik.http.routers.homepage.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/`))
+      # - traefik.http.routers.homepage.tls=true
+      # - traefik.http.routers.homepage.tls.certresolver=myresolver
+      # - traefik.http.services.homepage.loadbalancer.server.port=3000
   watchtower:
     image: ghcr.io/containrrr/watchtower:latest
     container_name: watchtower
@@ -559,4 +440,4 @@ services:
 
 networks:
   default:
-    name: docker-compose-nas
+    name: media-server
