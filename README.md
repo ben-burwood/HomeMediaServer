@@ -6,10 +6,35 @@ Stripped out and modified for personal use.
 
 ## Installation
 
+### Docker
+
+Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively.
+
+This example downloads the script from get.docker.com and runs it to install the latest stable release of Docker on Linux:
+
+```sh
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+
+Docker is installed. The docker service starts automatically on Debian based distributions.
+
+### Docker Compose
+
+On Linux, you can download the Docker Compose binary from the Compose repository release page on GitHub. Follow the instructions from the link, which involve running the curl command in your terminal to download the binaries. These step-by-step instructions are also included below.
+
+Run this command to download the current stable release of Docker Compose:
+
+```sh
+curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+
+Apply executable permissions to the binary:
+
+`sudo chmod +x /usr/local/bin/docker-compose`
 
 
-
-#### COPY
+# Fork Readme
 
 After searching for the perfect NAS solution, I realized what I wanted could be achieved
 with some Docker containers on a vanilla Linux box. The result is an opinionated Docker Compose configuration capable of
@@ -70,7 +95,7 @@ I am running it in Ubuntu Server 22.04; I also tested this setup on a [Synology 
 ## Applications
 
 | **Application**                                                    | **Description**                                                                                                                                      | **Image**                                                                                | **URL**      |
-|--------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|--------------|
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------ |
 | [Sonarr](https://sonarr.tv)                                        | PVR for newsgroup and bittorrent users                                                                                                               | [linuxserver/sonarr](https://hub.docker.com/r/linuxserver/sonarr)                        | /sonarr      |
 | [Radarr](https://radarr.video)                                     | Movie collection manager for Usenet and BitTorrent users                                                                                             | [linuxserver/radarr](https://hub.docker.com/r/linuxserver/radarr)                        | /radarr      |
 | [Bazarr](https://www.bazarr.media/)                                | Companion application to Sonarr and Radarr that manages and downloads subtitles                                                                      | [linuxserver/bazarr](https://hub.docker.com/r/linuxserver/bazarr)                        | /bazarr      |
@@ -109,7 +134,7 @@ If you want to show Jellyfin information in the homepage, create it in Jellyfin 
 ## Environment Variables
 
 | Variable                       | Description                                                                                                                                                                                            | Default                                          |
-|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
 | `COMPOSE_FILE`                 | Docker compose files to load                                                                                                                                                                           |                                                  |
 | `COMPOSE_PROFILES`             | Docker compose profiles to load (`flaresolverr`, `adguardhome`, `sabnzbd`)                                                                                                                             |                                                  |
 | `USER_ID`                      | ID of the user to use in Docker containers                                                                                                                                                             | `1000`                                           |
@@ -175,7 +200,7 @@ otherwise the VPN container will exit and qBittorrent will not start.
 ### File Structure
 
 Sonarr, Radarr, and Lidarr must be configured to support hardlinks, to allow instant moves and prevent using twice the storage
-(Bittorrent downloads and final file). The trick is to use a single volume shared by the Bittorrent client and the *arrs.
+(Bittorrent downloads and final file). The trick is to use a single volume shared by the Bittorrent client and the \*arrs.
 Subfolders are used to separate the TV shows from the movies.
 
 The configuration is well explained by [this guide](https://trash-guides.info/Hardlinks/How-to-setup-for/Docker/).
@@ -216,6 +241,7 @@ Their API keys can be found in Settings > Security > API Key.
 
 Running `update-config.sh` will set qBittorrent's password to `adminadmin`. If you wish to update the password manually,
 since qBittorrent v4.6.2, a temporary password is generated on startup. Get it with `docker compose logs qbittorrent`:
+
 ```
 The WebUI administrator username is: admin
 The WebUI administrator password was not set. A temporary password is provided for this session: <some_password>
@@ -285,6 +311,7 @@ Traefik makes this trivial by using Let's Encrypt and one of its
 Let's assume we are using `nas.domain.com` as custom subdomain.
 
 The idea is to create an A record pointing to the private IP of the NAS, `192.168.0.10` for example:
+
 ```
 nas.domain.com.	1	IN	A	192.168.0.10
 ```
@@ -299,6 +326,7 @@ Then, fill the CloudFlare `.env` entries.
 
 If you want to test your configuration first, use the Let's Encrypt staging server by updating `LETS_ENCRYPT_CA_SERVER`'s
 value in `.env`:
+
 ```
 LETS_ENCRYPT_CA_SERVER=https://acme-staging-v02.api.letsencrypt.org/directory
 ```
@@ -319,6 +347,7 @@ If we want to make it reachable from outside the network without opening ports o
 you are connecting from, and they will see each other.
 
 In this case, the A record should point to the IP Tailscale assigned to the NAS, eg `100.xxx.xxx.xxx`:
+
 ```
 nas.domain.com.	1	IN	A	100.xxx.xxx.xxx
 ```
@@ -408,10 +437,10 @@ Unrar is included by default and needs to be set in the Calibre-Web admin page (
 with a path of `/usr/bin/unrar`.
 
 ### Decluttarr
-Decluttarr keeps the queue free of stalled and redundant downloads. For configuration options and examples, 
+Decluttarr keeps the queue free of stalled and redundant downloads. For configuration options and examples,
 please see https://github.com/ManiMatter/decluttarr/blob/dev/README.md.
 
-All environment variables are prefixed with `DECLUTTARR_`. 
+All environment variables are prefixed with `DECLUTTARR_`.
 
 ### Tandoor
 
@@ -443,82 +472,31 @@ services:
   vpn:
     image: ghcr.io/bubuntux/nordvpn
     cap_add:
-      - NET_ADMIN               # Required
-      - NET_RAW                 # Required
-    environment:                # Review https://github.com/bubuntux/nordvpn#environment-variables
-      - USER=user@email.com     # Required
-      - "PASS=pas$word"         # Required
+      - NET_ADMIN # Required
+      - NET_RAW # Required
+    environment: # Review https://github.com/bubuntux/nordvpn#environment-variables
+      - USER=user@email.com # Required
+      - "PASS=pas$word" # Required
       - CONNECT=United_States
       - TECHNOLOGY=NordLynx
-      - NETWORK=192.168.1.0/24  # So it can be accessed within the local network
+      - NETWORK=192.168.1.0/24 # So it can be accessed within the local network
 ```
 
-### Optional: Using the VPN for *arr apps
+### Optional: Using the VPN for \*arr apps
 
-If you want to use the VPN for Prowlarr and other *arr applications, add the following block to all the desired containers:
+If you want to use the VPN for Prowlarr and other \*arr applications, add the following block to all the desired containers:
+
 ```yml
-    network_mode: "service:vpn"
-    depends_on:
-      vpn:
-        condition: service_healthy
+network_mode: "service:vpn"
+depends_on:
+  vpn:
+    condition: service_healthy
 ```
 
 Change the healthcheck to mark the containers as unhealthy when internet connection is not working by appending a URL
 to the healthcheck, eg: `test: [ "CMD", "curl", "--fail", "http://127.0.0.1:7878/radarr/ping", "https://google.com" ]`
 
 Then in Prowlarr, use `localhost` rather than `vpn` as the hostname, since they are on the same network.
-
-## Synology Quirks
-
-Docker compose NAS can run on DSM 7.1, with a few extra steps.
-
-### Free Ports 80 and 443
-
-By default, ports 80 and 443 are used by Nginx but not actually used for anything useful. Free them by creating a new task
-in the Task Scheduler > Create > Triggered Task > User-defined script. Leave the Event as `Boot-up` and the `root` user,
-go to Task Settings and paste the following in User-defined script:
-```
-sed -i -e 's/80/81/' -e 's/443/444/' /usr/syno/share/nginx/server.mustache /usr/syno/share/nginx/DSM.mustache /usr/syno/share/nginx/WWWService.mustache
-
-synosystemctl restart nginx
-```
-
-### Install Synology WireGuard
-
-Since WireGuard is not part of DSM's kernel, an external package must be installed for the `vpn` container to run.
-
-For DSM 7.1, download and install the package corresponding to your NAS CPU architecture
-[from here](https://github.com/vegardit/synology-wireguard/releases).
-
-As specified in the [project's README](https://github.com/vegardit/synology-wireguard#installation),
-the package must be run as `root` from the command line: `sudo /var/packages/WireGuard/scripts/start`
-
-### Free Port 1900
-
-Jellyfin will fail to run by default since the port 1900
-[is not free](https://lookanotherblog.com/resolve-port-1900-conflict-between-plex-and-synology/).
-You may free it by going to  Control Panel > File Services > Advanced > SSTP > Untick `Enable Windows network discovery`.
-
-### User Permissions
-
-By default, the user and groups are set to `1000` as it is the default on Ubuntu and many other Linux distributions.
-However, that is not the case in Synology; the first user should have an ID of `1026` and a group of `100`.
-You may check yours with `id`.
-Update the `USER_ID` and `GROUP_ID` in `.env` with your IDs.
-Not updating them may result in [permission issues](https://github.com/AdrienPoupa/docker-compose-nas/issues/10).
-
-```
-USER_ID=1026
-GROUP_ID=100
-```
-
-### Synology DHCP Server and Adguard Home Port Conflict
-
-If you are using the Synology DHCP Server package, it will use port 53 even if it does not need it. This is because
-it uses Dnsmasq to handle DHCP requests, but does not serve DNS queries. The port can be released by editing (as root)
-`/usr/local/lib/systemd/system/pkg-dhcpserver.service` and [adding -p 0](https://www.reddit.com/r/synology/comments/njwdao/comment/j2d23qr/?utm_source=reddit&utm_medium=web2x&context=3):
-`ExecStart=/var/packages/DhcpServer/target/dnsmasq-2.x/usr/bin/dnsmasq --user=DhcpServer --group=DhcpServer --cache-size=200 --conf-file=/etc/dhcpd/dhcpd.conf --dhcp-lease-max=2147483648 -p 0`
-Reboot the NAS and the port 53 will be free for Adguard.
 
 ## Use Separate Paths for Torrents and Storage
 
@@ -579,19 +557,14 @@ network:
         - 192.168.0.10/24
       gateway4: 192.168.0.1
       nameservers:
-          addresses: [8.8.8.8, 8.8.4.4]
+        addresses: [8.8.8.8, 8.8.4.4]
   version: 2
 ```
 
 Apply the plan: `sudo netplan apply`. You can check the server uses the right IP with `ip a`.
 
-## Laptop Specific Configuration
+# References
 
-If the server is installed on a laptop, you may want to disable the suspension when the lid is closed:
-`sudo nano /etc/systemd/logind.conf`
-
-Replace:
-- `#HandleLidSwitch=suspend` by `HandleLidSwitch=ignore`
-- `#LidSwitchIgnoreInhibited=yes` by `LidSwitchIgnoreInhibited=no`
-
-Then restart: `sudo service systemd-logind restart`
+https://github.com/AdrienPoupa/docker-compose-nas
+https://github.com/LucasACH/raspberry-pi-media-server
+https://github.com/navilg/media-stack
