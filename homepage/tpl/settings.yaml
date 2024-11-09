@@ -1,7 +1,5 @@
 ---
-title: {{HOMEPAGE_VAR_TITLE}}
-
-headerStyle: {{HOMEPAGE_VAR_HEADER_STYLE}}
+title: Media Server
 
 layout:
   Media:
@@ -11,7 +9,4 @@ layout:
     style: row
     columns: 2
 
-quicklaunch:
-  searchDescriptions: true
-  hideInternetSearch: true
-  hideVisitURL: true
+hideVersion: true
