@@ -6,6 +6,14 @@ Stripped out and modified for personal use.
 
 ## Installation
 
+1. Update the System `sudo apt install` && `sudo apt update -y`
+2. Install Docker as below
+3. Install git - `sudo apt install git`
+4. Clone the Repository - `git clone <REPO_SLUG>`
+5. Create Docker Network - `./docker-network.sh`
+6. Bring up the MediaServer - `docker-compose -f docker-compose.yml -f docker-compose-rp.yml up -d`
+8. Run the Config Updater for the API Keys - `./update-config.sh`
+
 ### Docker
 
 Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively.

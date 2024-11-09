@@ -1,17 +1,12 @@
 ---
-# For configuration options and examples, please see:
-# https://gethomepage.dev/en/configs/widgets
-
 - resources:
     cpu: true
+    cputemp: true
     memory: true
+    uptime: true
     disk:
       - /
       - /data
-
-- search:
-    provider: {{HOMEPAGE_VAR_SEARCH_PROVIDER}}
-    target: _blank
 
 - datetime:
     text_size: md
