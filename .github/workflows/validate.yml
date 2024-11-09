@@ -10,4 +10,6 @@ jobs:
       - name: Setup Environment Variables
         run: cp .env.example .env
       - name: Validate Docker Compose
-        run: docker-compose config
+        run: docker-compose -f docker-compose.yml config
+      - name: Validate Docker Compose (Reverse Proxy)
+        run: docker-compose -f docker-compose-rp.yml config
