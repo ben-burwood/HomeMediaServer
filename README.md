@@ -14,6 +14,15 @@ Stripped out and modified for personal use.
 6. Bring up the MediaServer - `docker-compose -f docker-compose.yml -f docker-compose-rp.yml up -d`
 8. Run the Config Updater for the API Keys - `./update-config.sh`
 
+### Drive Mounting
+
+External Drives need to be mounted in Linux to then be passed through to the Docker Volumes.
+
+1. Identify the Drive with `lsblk`
+2. Create as Mount Point : `sudo mkdir -p /mnt/data`
+3. Mount the Partition : `sudo mount /dev/sda<> /mnt/data`
+4. Verify the Mount : `df -h`
+
 ### Docker
 
 Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively.

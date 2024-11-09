@@ -197,9 +197,6 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
-    environment:
-      - HOMEPAGE_VAR_TITLE=${HOMEPAGE_VAR_TITLE}
-      - HOMEPAGE_VAR_HEADER_STYLE=${HOMEPAGE_VAR_HEADER_STYLE}
     volumes:
       - ./homepage:/app/config
       - ${DATA_ROOT}:/data
@@ -207,7 +204,6 @@ services:
     networks:
       - media-server
     restart: always
-    command: [sh, -c, "cp -n /app/config/tpl/*.yaml /app/config && node server.js"]
 
   unpackerr:
     image: golift/unpackerr
