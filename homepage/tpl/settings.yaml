@@ -1,7 +1,4 @@
 ---
-# For configuration options and examples, please see:
-# https://gethomepage.dev/en/configs/settings
-
 title: {{HOMEPAGE_VAR_TITLE}}
 
 headerStyle: {{HOMEPAGE_VAR_HEADER_STYLE}}

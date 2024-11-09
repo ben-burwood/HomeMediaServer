@@ -7,10 +7,8 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-      - ${CONFIG_ROOT:-.}/sonarr:/config
+      - ./sonarr:/config
       - ${DATA_ROOT}:/data
-    ports:
-      - 8989:8989
     networks:
       - media-server
     restart: always
@@ -36,10 +34,8 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-      - ${CONFIG_ROOT:-.}/radarr:/config
+      - ./radarr:/config
       - ${DATA_ROOT}:/data
-    ports:
-      - 7878:7878
     networks:
       - media-server
     restart: always
@@ -65,7 +61,7 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-      - ${CONFIG_ROOT:-.}/bazarr/config:/config
+      - ./bazarr/config:/config
       - ${DATA_ROOT}:/data
     networks:
       - media-server
@@ -92,9 +88,7 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-      - ${CONFIG_ROOT:-.}/prowlarr:/config
-    ports:
-      - 9696:9696
+      - ./prowlarr:/config
     networks:
       - media-server
     restart: always
@@ -121,12 +115,8 @@ services:
       - TZ=${TIMEZONE}
       - WEBUI_PORT=5080
     volumes:
-      - ${CONFIG_ROOT:-.}/qbittorrent:/config
+      - ./qbittorrent:/config
       - ${DOWNLOAD_ROOT}:/data/torrents
-    ports:
-      - 5080:5080
-      - 6881:6881
-      - 6881:6881/udp
     networks:
       - media-server
     restart: always
@@ -147,7 +137,7 @@ services:
       - homepage.description=Bittorrent client
       - homepage.weight=2
       - homepage.widget.type=qbittorrent
-      - homepage.widget.url=http://vpn:8080
+      - homepage.widget.url=http://qbittorrent:5080
       - homepage.widget.username=${QBITTORRENT_USERNAME}
       - homepage.widget.password=${QBITTORRENT_PASSWORD}
 
@@ -158,9 +148,7 @@ services:
       - LOG_LEVEL=debug
       - TZ=${TIMEZONE}
     volumes:
-      - ${CONFIG_ROOT:-.}/jellyseerr:/app/config
-    ports:
-      - 5055:5055
+      - ./jellyseerr:/app/config
     networks:
       - media-server
     restart: always
@@ -187,13 +175,8 @@ services:
       - TZ=${TIMEZONE}
       - JELLYFIN_PublishedServerUrl=${HOSTNAME}/jellyfin
     volumes:
-      - ${CONFIG_ROOT:-.}/jellyfin:/config
+      - ./jellyfin:/config
       - ${DATA_ROOT}:/data
-    ports:
-      - 7359:7359/udp
-      - 1900:1900/udp
-      - 8096:8096
-      - 8920:8920
     networks:
       - media-server
     restart: always
@@ -217,14 +200,11 @@ services:
     container_name: homepage
     environment:
       - HOMEPAGE_VAR_TITLE=${HOMEPAGE_VAR_TITLE}
-      - HOMEPAGE_VAR_SEARCH_PROVIDER=${HOMEPAGE_VAR_SEARCH_PROVIDER}
       - HOMEPAGE_VAR_HEADER_STYLE=${HOMEPAGE_VAR_HEADER_STYLE}
     volumes:
-      - ${CONFIG_ROOT:-.}/homepage:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./homepage:/app/config
       - ${DATA_ROOT}:/data
-    ports:
-      - 3000:3000
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - media-server
     restart: always
@@ -269,36 +249,36 @@ services:
   unpackerr:
     image: ghcr.io/unpackerr/unpackerr:latest
     container_name: unpackerr
-    volumes:
-      - ${DOWNLOAD_ROOT}:/data/torrents
-    restart: always
-    user: ${USER_ID}:${GROUP_ID}
     environment:
       - TZ=${TIMEZONE}
       - UN_SONARR_0_URL=http://sonarr:8989/sonarr
       - UN_SONARR_0_API_KEY=${SONARR_API_KEY}
       - UN_RADARR_0_URL=http://radarr:7878/radarr
       - UN_RADARR_0_API_KEY=${RADARR_API_KEY}
+    volumes:
+      - ${DOWNLOAD_ROOT}:/data/torrents
+    user: ${USER_ID}:${GROUP_ID}
     security_opt:
       - no-new-privileges:true
+    restart: always
+
   watchtower:
     image: ghcr.io/containrrr/watchtower:latest
     container_name: watchtower
-    restart: always
     environment:
       - WATCHTOWER_CLEANUP=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
   autoheal:
     image: willfarrell/autoheal:latest
     container_name: autoheal
-    restart: always
     environment:
       - AUTOHEAL_CONTAINER_LABEL=all
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
 
 networks:
   media-server:
-    name: media-server
     external: true
