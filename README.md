@@ -14,6 +14,26 @@ Stripped out and modified for personal use.
 6. Bring up the MediaServer - `docker-compose -f docker-compose.yml -f docker-compose-rp.yml up -d`
 8. Run the Config Updater for the API Keys - `./update-config.sh`
 
+### Drive Mounting
+
+External Drives need to be mounted in Linux to then be passed through to the Docker Volumes.
+
+1. Identify the Drive with `lsblk`
+2. Create as Mount Point : `sudo mkdir -p /mnt/data`
+3. Mount the Partition : `sudo mount /dev/sda<> /mnt/data`
+4. Verify the Mount : `df -h`
+
+Drive Mounting is NOT Persistent to Reboot
+#### Auto Mounting - https://developerinsider.co/auto-mount-drive-in-ubuntu-server-22-04-at-startup/
+
+1. Get Drive UUID and FSTYPE : `lsblk -o NAME,FSTYPE,UUID,MOUNTPOINTS`
+2. Create Mount Point : `sudo mkdir -p /mnt/data`
+3. Edit FSTAB File : `sudo nano /etc/fstab` ->
+      `UUID=<UUID> <PATH_TO_MOUNT> <DRIVE_TYPE>  defaults,uid=1000,gid=1000,umask=022        0       0`
+4. Test : `sudo findmnt --verify`
+
+Make sure that the Permissions for the Mount match that of the Containers using it - i.e. uid/gid are the User of the Containers.
+
 ### Docker
 
 Docker provides a convenience script at get.docker.com to install Docker into development environments quickly and non-interactively.
